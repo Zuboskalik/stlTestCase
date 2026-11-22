@@ -61,11 +61,13 @@ function page_header($title)
     $menu = array(
         'index.php' => 'Рейсы',
         'invoices.php' => 'Счета',
+        'billing.php' => 'Счета за месяц',
         'load_report.php' => 'Загрузка машин',
     );
     $current = basename($_SERVER['SCRIPT_NAME']);
 
     echo '<!doctype html><html lang="ru"><head><meta charset="utf-8">';
+    echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
     echo '<title>' . h($title) . '</title>';
     echo '<link rel="stylesheet" href="css/app.css">';
     echo '<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>';

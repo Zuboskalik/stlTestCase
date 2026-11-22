@@ -4,7 +4,7 @@ require __DIR__ . '/../lib/bootstrap.php';
 $months = db()->query("SELECT DISTINCT substr(departure_date, 1, 7) FROM trips ORDER BY 1 DESC")->fetchAll(PDO::FETCH_COLUMN);
 $month = isset($_GET['month']) ? $_GET['month'] : '';
 if (!in_array($month, $months)) {
-    $month = $months[0];
+    $month = $months[0] ?? '';
 }
 
 $trips = db()->query("SELECT t.*, (SELECT SUM(weight_kg) FROM cargo WHERE trip_id = t.id) AS weight_kg
@@ -40,9 +40,9 @@ page_header('Загрузка машин');
     <?php foreach ($trips as $trip): ?>
         <?php
         $load = $trip['capacity_kg'] ? $trip['weight_kg'] / $trip['capacity_kg'] * 100 : 0;
-        $shares = calc_share($trip['id']);
+        $shares = trip_cargo_by_client($trip['id']);
         uasort($shares, function ($a, $b) {
-            return $b['share'] <=> $a['share'];
+            return $b['weight_kg'] <=> $a['weight_kg'];
         });
         ?>
         <tr class="total">
@@ -58,7 +58,7 @@ page_header('Загрузка машин');
                 <td><?= h($share['name']) ?></td>
                 <td colspan="3"></td>
                 <td class="r"><?= num($share['weight_kg']) ?></td>
-                <td class="r"><?= num($share['share'] * 100, 1) ?></td>
+                <td class="r"><?= num($trip['weight_kg'] > 0 ? $share['weight_kg'] / $trip['weight_kg'] * 100 : 0, 1) ?></td>
             </tr>
         <?php endforeach; ?>
     <?php endforeach; ?>
